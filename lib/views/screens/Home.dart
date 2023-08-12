@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:theproject/screens/page1.dart';
-import 'package:theproject/screens/page2.dart';
-import 'package:theproject/screens/page3.dart';
+import 'package:theproject/views/screens/page1.dart';
+import 'package:theproject/views/screens/page2.dart';
+import 'package:theproject/views/screens/page3.dart';
 
 class homeScreen extends StatefulWidget {
   String email;
@@ -57,7 +57,7 @@ class _homeScreenState extends State<homeScreen> {
         onTap: (value) {
           currentindex = value;
           setState(() {});
-          selectedItemColor:
+         // selectedItemColor:
           Colors.amber[800];
           print(value);
         },
