@@ -156,7 +156,36 @@ class _loginscreenState extends State<loginscreen> {
                     width: 400,
                     color: Colors.white,
                     child: ElevatedButton(
-                      onPressed: () async {},
+                      onPressed: () async {
+                        /* try {
+                          UserCredential userCredential = await FirebaseAuth
+                              .instance
+                              .createUserWithEmailAndPassword(
+                                  email: emailcontroller.text,
+                                  password: passwordcontroller.text);
+                          if (emailcontroller.text != null) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text('succeess'),
+                              ),
+                            );
+                          } else {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text('enter valid value'),
+                              ),
+                            );
+                          }
+                        } on FirebaseAuthException catch (e) {
+                          if (e.code == 'weak-password') {
+                            print('The password provided is too weak.');
+                          } else if (e.code == 'email-already-in-use') {
+                            print('The account already exists for that email.');
+                          }
+                        } catch (e) {
+                          print(e);
+                        }*/
+                      },
                       style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.grey),
                       child: const Text(
