@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:theproject/views/screens/Home.dart';
@@ -12,6 +13,7 @@ class loginscreen extends StatefulWidget {
 class _loginscreenState extends State<loginscreen> {
   final _formKey = GlobalKey<FormState>();
   TextEditingController emailcontroller = TextEditingController();
+  TextEditingController passwordcontroller = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -73,6 +75,7 @@ class _loginscreenState extends State<loginscreen> {
                     height: 50,
                     width: 600,
                     child: TextFormField(
+                      controller: passwordcontroller,
                       decoration: const InputDecoration(
                         labelText: 'password',
                       ),
@@ -90,20 +93,27 @@ class _loginscreenState extends State<loginscreen> {
                   InkWell(
                       onTap: () async {
                         if (_formKey.currentState!.validate()) {
-                          final SharedPreferences prefs =
-                              await SharedPreferences.getInstance();
-                          await prefs.setString('email', emailcontroller.text);
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => homeScreen(
-                                      email: emailcontroller.text,
-                                    )),
-                          );
-
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(content: Text('success')),
-                          );
+                          bool result = await firebaselogin(
+                              emailcontroller.text, passwordcontroller.text);
+                          if (result == true) {
+                            final SharedPreferences prefs =
+                                await SharedPreferences.getInstance();
+                            await prefs.setString(
+                                'email', emailcontroller.text);
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => homeScreen(
+                                        email: emailcontroller.text,
+                                      )),
+                            );
+                          } else {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text('login failed'),
+                              ),
+                            );
+                          }
                         }
                       },
                       child: Padding(
@@ -146,7 +156,7 @@ class _loginscreenState extends State<loginscreen> {
                     width: 400,
                     color: Colors.white,
                     child: ElevatedButton(
-                      onPressed: () {},
+                      onPressed: () async {},
                       style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.grey),
                       child: const Text(
@@ -162,5 +172,22 @@ class _loginscreenState extends State<loginscreen> {
             ),
           ),
         ));
+  }
+
+  Future<bool> firebaselogin(String email, String password) async {
+    try {
+      UserCredential userCredential = await FirebaseAuth.instance
+          .signInWithEmailAndPassword(email: email, password: password);
+      if (userCredential.user != null) {
+        return true;
+      }
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'user-not-found') {
+        print('No user found for that email.');
+      } else if (e.code == 'wrong-password') {
+        print('Wrong password provided for that user.');
+      }
+    }
+    return false;
   }
 }
